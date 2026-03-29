@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guillaume Robin – AXA Recommandations</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --axa-blue:      #00008F;
+    --axa-blue-dark: #00005C;
+    --axa-red:       #FF1721;
+    --axa-red-dark:  #C8000A;
+    --axa-white:     #FFFFFF;
+    --axa-light:     #F0F0F8;
+    --axa-grey-1:    #666680;
+    --axa-grey-2:    #EBEBF0;
+    --axa-grey-3:    #F7F7FB;
+    --axa-text:      #1A1A3C;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--axa-grey-3);
+    min-height: 100vh;
+    color: var(--axa-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--axa-blue);
+    min-height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px;
+    position: sticky; top: 0; z-index: 200; gap: 16px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .axa-logo { color: white; font-size: 28px; font-weight: 700; letter-spacing: -1px; flex-shrink: 0; }
+  .topbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+  .topbar-info { display: flex; flex-direction: column; gap: 2px; }
+  .topbar-name { color: white; font-size: 14px; font-weight: 700; }
+  .topbar-role { color: rgba(255,255,255,0.65); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Bouton discret "Espace agent" dans la topbar */
+  .btn-agent-access {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.75);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .btn-agent-access:hover { background: rgba(255,255,255,0.18); color: white; }
+
+  .red-line { height: 4px; background: var(--axa-red); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeUp 0.28s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ══════════════════════
+     PAGE CLIENT (défaut)
+  ══════════════════════ */
+  .client-page {
+    min-height: calc(100vh - 68px);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 16px 60px;
+  }
+  .form-card {
+    background: var(--axa-white); width: 100%; max-width: 480px;
+    border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,143,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .form-hero {
+    background: var(--axa-blue); padding: 32px 32px 28px;
+    position: relative; overflow: hidden;
+  }
+  .form-hero::before {
+    content:''; position:absolute; right:-30px; top:-30px;
+    width:160px; height:160px; border:40px solid rgba(255,255,255,0.06); border-radius:50%;
+  }
+  .form-hero::after {
+    content:''; position:absolute; left:-20px; bottom:-40px;
+    width:120px; height:120px; border:30px solid rgba(255,23,33,0.12); border-radius:50%;
+  }
+  .form-hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--axa-red); color: white;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 2px; margin-bottom: 16px;
+  }
+  .form-hero h1 {
+    font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;
+    color: white; line-height: 1.3; margin-bottom: 8px; position: relative; z-index: 1;
+  }
+  .form-hero p { font-size: 14px; color: rgba(255,255,255,0.72); line-height: 1.55; position:relative; z-index:1; font-weight:300; }
+  .form-hero-agent {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 18px; position: relative; z-index: 1;
+    background: rgba(255,255,255,0.08); border-radius: var(--radius-sm);
+    padding: 10px 14px; border-left: 3px solid var(--axa-red);
+  }
+  .form-hero-agent-name { color: white; font-size: 13px; font-weight: 700; }
+  .form-hero-agent-role { color: rgba(255,255,255,0.60); font-size: 11px; }
+  .form-hero-line { height: 3px; background: var(--axa-red); }
+  .form-body { padding: 28px 32px 32px; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display:block; font-size:13px; font-weight:700; color:var(--axa-text); margin-bottom:6px; }
+  .form-label span { color: var(--axa-red); margin-left:2px; }
+  .form-input {
+    width:100%; padding:11px 14px;
+    border:1.5px solid var(--axa-grey-2); border-radius:var(--radius-sm);
+    font-family:'Source Sans 3',sans-serif; font-size:15px; color:var(--axa-text);
+    background:var(--axa-white); outline:none;
+    transition:border-color 0.18s, box-shadow 0.18s;
+  }
+  .form-input:focus { border-color:var(--axa-blue); box-shadow:0 0 0 3px rgba(0,0,143,0.10); }
+  .form-input::placeholder { color:#B0B0C8; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .privacy-note {
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--axa-light); border-left:3px solid var(--axa-blue);
+    border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+    padding:12px 14px; margin-bottom:22px;
+    font-size:12.5px; color:var(--axa-grey-1); line-height:1.5;
+  }
+  .btn-primary {
+    width:100%; padding:14px 20px; background:var(--axa-red); color:white; border:none;
+    border-radius:var(--radius-sm); font-family:'Source Sans 3',sans-serif;
+    font-size:15px; font-weight:700; cursor:pointer; letter-spacing:0.02em;
+    transition:background 0.18s, transform 0.12s, box-shadow 0.18s;
+  }
+  .btn-primary:hover { background:var(--axa-red-dark); box-shadow:0 4px 16px rgba(255,23,33,0.30); transform:translateY(-1px); }
+  .btn-primary:active { transform:translateY(0); }
+  .success-panel { display:none; text-align:center; padding:40px 20px; }
+  .success-check {
+    width:68px; height:68px; border-radius:50%; background:var(--axa-blue);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 20px; font-size:28px; color:white;
+    box-shadow:0 8px 24px rgba(0,0,143,0.25);
+  }
+  .success-panel h2 { font-family:'Playfair Display',serif; font-size:22px; color:var(--axa-blue); margin-bottom:10px; }
+  .success-panel p { font-size:14px; color:var(--axa-grey-1); line-height:1.6; }
+
+  /* ══════════════════════
+     OVERLAY CODE PIN
+  ══════════════════════ */
+  .pin-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,143,0.60); backdrop-filter: blur(4px);
+    z-index: 500; align-items: center; justify-content: center;
+  }
+  .pin-overlay.open { display: flex; }
+  .pin-card {
+    background: white; border-radius: var(--radius-lg);
+    width: 90%; max-width: 340px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    animation: modalIn 0.28s cubic-bezier(0.34,1.5,0.64,1);
+  }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  .pin-head { background: var(--axa-blue); padding: 24px; text-align: center; position: relative; }
+  .pin-head::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--axa-red); }
+  .pin-lock { font-size: 32px; margin-bottom: 10px; }
+  .pin-head h3 { font-family:'Playfair Display',serif; font-size: 18px; color: white; margin-bottom: 4px; }
+  .pin-head p { font-size: 12px; color: rgba(255,255,255,0.60); }
+  .pin-body { padding: 28px 24px 24px; }
+
+  /* Afficheur du code */
+  .pin-display {
+    display: flex; justify-content: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--axa-grey-2);
+    background: transparent; transition: all 0.2s;
+  }
+  .pin-dot.filled { background: var(--axa-blue); border-color: var(--axa-blue); }
+  .pin-dot.error  { background: var(--axa-red);  border-color: var(--axa-red); animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  /* Clavier numérique */
+  .pin-keyboard {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 16px;
+  }
+  .pin-key {
+    aspect-ratio: 1;
+    border: 1.5px solid var(--axa-grey-2); border-radius: var(--radius-md);
+    background: white; cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 20px; font-weight: 700; color: var(--axa-text);
+    transition: all 0.12s; display: flex; align-items: center; justify-content: center;
+    user-select: none;
+  }
+  .pin-key:hover { background: var(--axa-light); border-color: var(--axa-blue); color: var(--axa-blue); }
+  .pin-key:active { transform: scale(0.94); }
+  .pin-key.del { font-size: 18px; color: var(--axa-grey-1); }
+  .pin-key.del:hover { border-color: var(--axa-red); color: var(--axa-red); background: #FFF5F5; }
+  .pin-key.empty { border: none; cursor: default; background: transparent; }
+  .pin-key.empty:hover { background: transparent; }
+
+  .pin-cancel {
+    width: 100%; padding: 11px; border: 1.5px solid var(--axa-grey-2);
+    background: white; border-radius: var(--radius-sm);
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px;
+    font-weight: 600; color: var(--axa-grey-1); cursor: pointer; transition: all 0.15s;
+  }
+  .pin-cancel:hover { border-color: var(--axa-red); color: var(--axa-red); background: #FFF5F5; }
+
+  /* ══════════════════════
+     PAGE AGENT
+  ══════════════════════ */
+  .agent-page { padding: 28px 24px 60px; max-width: 980px; margin: 0 auto; }
+  .agent-header {
+    display:flex; align-items:flex-start; justify-content:space-between;
+    margin-bottom:24px; gap:16px; flex-wrap:wrap;
+  }
+  .agent-title { font-family:'Playfair Display',serif; font-size:26px; color:var(--axa-blue); font-weight:700; margin-bottom:4px; }
+  .agent-subtitle { font-size:13px; color:var(--axa-grey-1); }
+  .header-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .btn-secondary {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 20px; background:var(--axa-blue); color:white; border:none;
+    border-radius:var(--radius-sm); font-family:'Source Sans 3',sans-serif;
+    font-size:14px; font-weight:700; cursor:pointer;
+    transition:background 0.18s, box-shadow 0.18s; white-space:nowrap;
+  }
+  .btn-secondary:hover { background:var(--axa-blue-dark); box-shadow:0 4px 16px rgba(0,0,143,0.25); }
+  .btn-logout {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 16px; background:white; color:var(--axa-grey-1);
+    border:1.5px solid var(--axa-grey-2); border-radius:var(--radius-sm);
+    font-family:'Source Sans 3',sans-serif; font-size:13px; font-weight:600;
+    cursor:pointer; transition:all 0.15s;
+  }
+  .btn-logout:hover { border-color:var(--axa-red); color:var(--axa-red); background:#FFF5F5; }
+
+  .kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+  .kpi-card {
+    background:var(--axa-white); border-radius:var(--radius-md);
+    padding:20px 20px 18px; border-top:3px solid var(--axa-blue);
+    box-shadow:0 1px 8px rgba(0,0,0,0.05);
+  }
+  .kpi-card.red { border-top-color:var(--axa-red); }
+  .kpi-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--axa-grey-1); margin-bottom:8px; }
+  .kpi-value { font-family:'Playfair Display',serif; font-size:36px; color:var(--axa-blue); line-height:1; font-weight:700; }
+  .kpi-card.red .kpi-value { color:var(--axa-red); }
+  .kpi-sub { font-size:12px; color:#AAAAC0; margin-top:4px; }
+
+  .controls { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .search-wrap { flex:1; min-width:180px; position:relative; }
+  .search-wrap input {
+    width:100%; padding:10px 14px 10px 38px;
+    border:1.5px solid var(--axa-grey-2); border-radius:var(--radius-sm);
+    font-family:'Source Sans 3',sans-serif; font-size:14px; color:var(--axa-text);
+    background:var(--axa-white); outline:none; transition:border-color 0.18s;
+  }
+  .search-wrap input:focus { border-color:var(--axa-blue); }
+  .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--axa-grey-1); font-size:15px; pointer-events:none; }
+  .select-filter {
+    padding:10px 14px; border:1.5px solid var(--axa-grey-2); border-radius:var(--radius-sm);
+    font-family:'Source Sans 3',sans-serif; font-size:14px; color:var(--axa-text);
+    background:var(--axa-white); outline:none; cursor:pointer;
+  }
+  .btn-clear {
+    padding:10px 16px; border:1.5px solid #FFD0D2; background:white;
+    border-radius:var(--radius-sm); font-family:'Source Sans 3',sans-serif;
+    font-size:13px; font-weight:600; color:var(--axa-red); cursor:pointer; transition:all 0.15s;
+  }
+  .btn-clear:hover { background:#FFF5F5; border-color:var(--axa-red); }
+
+  .data-table {
+    background:var(--axa-white); border-radius:var(--radius-md);
+    border:1px solid var(--axa-grey-2); overflow:hidden;
+    box-shadow:0 1px 8px rgba(0,0,0,0.04);
+  }
+  .table-head {
+    display:grid; grid-template-columns:1.2fr 1fr 160px 140px 90px;
+    padding:12px 20px; background:var(--axa-blue);
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;
+    color:rgba(255,255,255,0.80);
+  }
+  .contact-row {
+    display:grid; grid-template-columns:1.2fr 1fr 160px 140px 90px;
+    padding:14px 20px; border-bottom:1px solid var(--axa-grey-2);
+    align-items:center; transition:background 0.12s; animation:slideIn 0.25s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
+  .contact-row:last-child { border-bottom:none; }
+  .contact-row:hover { background:var(--axa-grey-3); }
+  .c-name { font-weight:700; font-size:14px; color:var(--axa-text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .c-phone { font-size:14px; color:var(--axa-grey-1); font-variant-numeric:tabular-nums; }
+  .c-badge { display:inline-block; font-size:12px; font-weight:600; background:var(--axa-light); color:var(--axa-blue); padding:3px 10px; border-radius:2px; }
+  .c-date { font-size:12px; color:#AAAAC0; }
+  .c-actions { display:flex; gap:6px; }
+  .ic-btn {
+    width:32px; height:32px; border-radius:var(--radius-sm);
+    border:1.5px solid var(--axa-grey-2); background:white;
+    cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.15s;
+  }
+  .ic-btn:hover { border-color:var(--axa-blue); background:var(--axa-light); }
+  .ic-btn.del:hover { border-color:var(--axa-red); background:#FFF5F5; }
+  .new-pill {
+    font-size:10px; font-weight:800; background:var(--axa-red); color:white;
+    padding:2px 7px; border-radius:2px; text-transform:uppercase; letter-spacing:0.06em;
+    animation:blink 1.8s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+  .empty-state { text-align:center; padding:60px 20px; color:var(--axa-grey-1); }
+  .empty-icon { font-size:44px; margin-bottom:16px; }
+  .empty-state h3 { font-size:17px; color:var(--axa-blue); margin-bottom:6px; font-weight:700; }
+  .empty-state p { font-size:14px; }
+
+  /* MODAL QR */
+  .overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,143,0.55); backdrop-filter:blur(3px);
+    z-index:600; align-items:center; justify-content:center;
+  }
+  .overlay.open { display:flex; }
+  .modal {
+    background:white; border-radius:var(--radius-lg);
+    width:90%; max-width:360px; overflow:hidden;
+    box-shadow:0 24px 80px rgba(0,0,0,0.3);
+    animation:modalIn 0.28s cubic-bezier(0.34,1.5,0.64,1);
+  }
+  .modal-head { background:var(--axa-blue); padding:20px 24px 18px; color:white; }
+  .modal-head h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:4px; }
+  .modal-head p { font-size:13px; opacity:0.72; font-weight:300; }
+  .modal-head-line { height:3px; background:var(--axa-red); }
+  .modal-body { padding:24px; text-align:center; }
+  #qrcode { display:inline-block; padding:14px; border:2px solid var(--axa-grey-2); border-radius:var(--radius-md); margin-bottom:16px; }
+  .url-box {
+    background:var(--axa-grey-3); border:1px solid var(--axa-grey-2); border-radius:var(--radius-sm);
+    padding:10px 14px; font-size:12px; color:var(--axa-grey-1); word-break:break-all;
+    cursor:pointer; margin-bottom:16px; transition:background 0.15s; text-align:left;
+  }
+  .url-box:hover { background:var(--axa-light); }
+  .btn-modal-close {
+    width:100%; padding:12px; border:1.5px solid var(--axa-grey-2); background:white;
+    border-radius:var(--radius-sm); font-family:'Source Sans 3',sans-serif;
+    font-size:14px; font-weight:700; color:var(--axa-blue); cursor:pointer; transition:all 0.15s;
+  }
+  .btn-modal-close:hover { background:var(--axa-light); border-color:var(--axa-blue); }
+
+  /* TOAST */
+  .toast {
+    position:fixed; bottom:24px; left:50%;
+    transform:translateX(-50%) translateY(60px);
+    background:var(--axa-blue); color:white;
+    padding:12px 22px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,143,0.30);
+    z-index:999; transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1); white-space:nowrap;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:640px) {
+    .topbar-role { display:none; }
+    .kpi-row { grid-template-columns:1fr 1fr; }
+    .table-head, .contact-row { grid-template-columns:1fr 130px 60px; }
+    .table-head > *:nth-child(3),
+    .contact-row > *:nth-child(3),
+    .table-head > *:nth-child(4),
+    .contact-row > *:nth-child(4) { display:none; }
+    .form-row { grid-template-columns:1fr; }
+    .form-body, .form-hero { padding-left:20px; padding-right:20px; }
+    .agent-page { padding:20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="axa-logo">AXA</div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-info">
+      <div class="topbar-name">Guillaume Robin</div>
+      <div class="topbar-role">AXA Épargne et Protection · Nantes (44)</div>
+    </div>
+  </div>
+  <button class="btn-agent-access" id="btn-agent-topbar" onclick="openPin()">🔐 Espace agent</button>
+</header>
+<div class="red-line"></div>
+
+<!-- ══════════════════════
+     PAGE CLIENT (défaut)
+══════════════════════ -->
+<div id="page-client" class="page active">
+  <div class="client-page">
+    <div class="form-card">
+      <div class="form-hero">
+        <div class="form-hero-tag">🤝 Recommandation</div>
+        <h1>Partagez un contact<br>de confiance</h1>
+        <p>Votre conseiller AXA peut également accompagner vos proches. Complétez ce formulaire en quelques secondes.</p>
+        <div class="form-hero-agent">
+          <div>
+            <div class="form-hero-agent-name">👤 Guillaume Robin</div>
+            <div class="form-hero-agent-role">AXA Épargne et Protection · Nantes (44)</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-hero-line"></div>
+      <div class="form-body">
+        <div id="form-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Prénom <span>*</span></label>
+              <input type="text" class="form-input" id="f-prenom" placeholder="Jean" autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nom <span>*</span></label>
+              <input type="text" class="form-input" id="f-nom" placeholder="Dupont" autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Téléphone <span>*</span></label>
+            <input type="tel" class="form-input" id="f-tel" placeholder="06 00 00 00 00" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Profession</label>
+            <input type="text" class="form-input" id="f-profession" placeholder="Ex : Médecin, Chef d'entreprise…">
+          </div>
+          <div class="privacy-note">
+            🔒 Ces informations sont transmises uniquement à Guillaume Robin (AXA) et ne seront pas partagées à des tiers.
+          </div>
+          <button class="btn-primary" onclick="submitContact()">Envoyer ma recommandation</button>
+        </div>
+        <div id="success-panel" class="success-panel">
+          <div class="success-check">✓</div>
+          <h2>Merci pour votre confiance !</h2>
+          <p>Votre recommandation a bien été transmise à Guillaume Robin.<br>Il prendra contact avec votre proche prochainement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     PAGE AGENT
+══════════════════════ -->
+<div id="page-agent" class="page">
+  <div class="agent-page">
+    <div class="agent-header">
+      <div>
+        <div class="agent-title">Mes recommandations</div>
+        <div class="agent-subtitle" id="last-update">Chargement…</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" onclick="openQR()">📱 QR Code</button>
+        <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total contacts</div>
+        <div class="kpi-value" id="kpi-total">0</div>
+        <div class="kpi-sub">depuis le début</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cette semaine</div>
+        <div class="kpi-value" id="kpi-week">0</div>
+        <div class="kpi-sub">7 derniers jours</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Nouveaux</div>
+        <div class="kpi-value" id="kpi-new">0</div>
+        <div class="kpi-sub">non consultés</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Rechercher un nom, téléphone…" id="search-input" oninput="renderTable()">
+      </div>
+      <select class="select-filter" id="filter-prof" onchange="renderTable()">
+        <option value="">Toutes professions</option>
+      </select>
+      <button class="btn-clear" onclick="clearAll()">🗑 Effacer tout</button>
+    </div>
+
+    <div class="data-table">
+      <div class="table-head">
+        <span>Nom complet</span>
+        <span>Téléphone</span>
+        <span>Profession</span>
+        <span>Date de réception</span>
+        <span>Actions</span>
+      </div>
+      <div id="contacts-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     OVERLAY CODE PIN
+══════════════════════ -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-card">
+    <div class="pin-head">
+      <div class="pin-lock">🔐</div>
+      <h3>Espace Agent</h3>
+      <p>Guillaume Robin — AXA Nantes (44)</p>
+    </div>
+    <div class="pin-body">
+      <div class="pin-display" id="pin-display">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+      <div class="pin-keyboard">
+        <button class="pin-key" onclick="pinKey('1')">1</button>
+        <button class="pin-key" onclick="pinKey('2')">2</button>
+        <button class="pin-key" onclick="pinKey('3')">3</button>
+        <button class="pin-key" onclick="pinKey('4')">4</button>
+        <button class="pin-key" onclick="pinKey('5')">5</button>
+        <button class="pin-key" onclick="pinKey('6')">6</button>
+        <button class="pin-key" onclick="pinKey('7')">7</button>
+        <button class="pin-key" onclick="pinKey('8')">8</button>
+        <button class="pin-key" onclick="pinKey('9')">9</button>
+        <button class="pin-key empty"></button>
+        <button class="pin-key" onclick="pinKey('0')">0</button>
+        <button class="pin-key del" onclick="pinDel()">⌫</button>
+      </div>
+      <button class="pin-cancel" onclick="closePin()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL QR -->
+<div class="overlay" id="modal-overlay" onclick="if(event.target===this)closeQR()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>QR Code client</h3>
+      <p>Donne accès au formulaire uniquement.<br>Le tableau de bord reste protégé.</p>
+    </div>
+    <div class="modal-head-line"></div>
+    <div class="modal-body">
+      <div id="qrcode"></div>
+      <div class="url-box" onclick="copyUrl()" title="Cliquer pour copier">
+        🔗 <span id="form-url"></span>
+      </div>
+      <button class="btn-modal-close" onclick="closeQR()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ════════════════════
+//  ⚙️ TON CODE PIN — modifie les 4 chiffres ici
+// ════════════════════
+const PIN_SECRET = '2025';   // ← change ton code ici
+
+// ════════════════════
+//  ÉTAT
+// ════════════════════
+const STORAGE_KEY = 'axa-contacts-gr-v1';
+const SESSION_KEY = 'axa-gr-session';
+let contacts = [];
+let loggedIn = false;
+let pinEntry = '';
+
+// ════════════════════
+//  INIT
+// ════════════════════
+function init() {
+  contacts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  loggedIn = sessionStorage.getItem(SESSION_KEY) === 'ok';
+  if (loggedIn) goDashboard();
+}
+
+// ════════════════════
+//  NAVIGATION
+// ════════════════════
+function setPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+}
+
+function goDashboard() {
+  loggedIn = true;
+  sessionStorage.setItem(SESSION_KEY, 'ok');
+  document.getElementById('btn-agent-topbar').style.display = 'none';
+  setPage('agent');
+  renderAll();
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  loggedIn = false;
+  document.getElementById('btn-agent-topbar').style.display = 'inline-flex';
+  setPage('client');
+  toast('Déconnecté');
+}
+
+// ════════════════════
+//  CODE PIN
+// ════════════════════
+function openPin() {
+  pinEntry = '';
+  updateDots();
+  document.getElementById('pin-overlay').classList.add('open');
+}
+
+function closePin() {
+  pinEntry = '';
+  updateDots();
+  document.getElementById('pin-overlay').classList.remove('open');
+}
+
+function pinKey(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  updateDots();
+  if (pinEntry.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+}
+
+function pinDel() {
+  pinEntry = pinEntry.slice(0, -1);
+  updateDots();
+}
+
+function updateDots(error = false) {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.classList.remove('filled', 'error');
+    if (i < pinEntry.length) dot.classList.add(error ? 'error' : 'filled');
+  }
+}
+
+function checkPin() {
+  if (pinEntry === PIN_SECRET) {
+    closePin();
+    goDashboard();
+    toast('✅ Bienvenue Guillaume !');
+  } else {
+    updateDots(true);
+    setTimeout(() => {
+      pinEntry = '';
+      updateDots();
+    }, 700);
+  }
+}
+
+// Clavier physique aussi
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('pin-overlay').classList.contains('open')) return;
+  if (e.key >= '0' && e.key <= '9') pinKey(e.key);
+  if (e.key === 'Backspace') pinDel();
+  if (e.key === 'Escape') closePin();
+});
+
+// ════════════════════
+//  FORMULAIRE CLIENT
+// ════════════════════
+function submitContact() {
+  const prenom = document.getElementById('f-prenom').value.trim();
+  const nom    = document.getElementById('f-nom').value.trim();
+  const tel    = document.getElementById('f-tel').value.trim();
+  const prof   = document.getElementById('f-profession').value.trim();
+
+  if (!prenom || !nom || !tel) {
+    toast('⚠️ Merci de remplir les champs obligatoires (*)');
+    return;
+  }
+  contacts.unshift({ id: Date.now(), prenom, nom, tel, profession: prof, date: new Date().toISOString(), isNew: true });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+  document.getElementById('form-fields').style.display = 'none';
+  document.getElementById('success-panel').style.display = 'block';
+}
+
+// ════════════════════
+//  DASHBOARD
+// ════════════════════
+function renderAll() {
+  contacts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  renderKPI(); renderFilter(); renderTable(); renderSubtitle();
+}
+
+function renderKPI() {
+  const week7 = Date.now() - 7 * 86400000;
+  document.getElementById('kpi-total').textContent = contacts.length;
+  document.getElementById('kpi-week').textContent  = contacts.filter(c => new Date(c.date).getTime() > week7).length;
+  document.getElementById('kpi-new').textContent   = contacts.filter(c => c.isNew).length;
+}
+
+function renderFilter() {
+  const sel = document.getElementById('filter-prof');
+  const cur = sel.value;
+  const profs = [...new Set(contacts.map(c => c.profession).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Toutes professions</option>' +
+    profs.map(p => `<option value="${p}" ${p===cur?'selected':''}>${p}</option>`).join('');
+}
+
+function renderTable() {
+  const q  = (document.getElementById('search-input').value || '').toLowerCase();
+  const pf = document.getElementById('filter-prof').value;
+  const list = contacts.filter(c =>
+    (c.prenom+' '+c.nom+' '+c.tel).toLowerCase().includes(q) && (!pf || c.profession === pf)
+  );
+  const el = document.getElementById('contacts-list');
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>${contacts.length ? 'Aucun résultat' : 'Aucune recommandation pour le moment'}</h3>
+      <p>${contacts.length ? 'Essayez un autre terme.' : 'Partagez le QR Code à vos clients pour commencer.'}</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(c => {
+    const d  = new Date(c.date);
+    const ds = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) + ' · ' +
+               d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const badge = c.isNew ? '<span class="new-pill">Nouveau</span>' : '';
+    return `<div class="contact-row">
+      <div class="c-name">${c.prenom} ${c.nom} ${badge}</div>
+      <div class="c-phone">${c.tel}</div>
+      <div>${c.profession ? `<span class="c-badge">${c.profession}</span>` : '<span style="color:#AAAAC0;font-size:13px">—</span>'}</div>
+      <div class="c-date">${ds}</div>
+      <div class="c-actions">
+        <button class="ic-btn" title="Appeler" onclick="window.location='tel:${c.tel.replace(/\s/g,'')}'">📞</button>
+        <button class="ic-btn del" title="Supprimer" onclick="del(${c.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  contacts.forEach(c => c.isNew = false);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+  renderKPI();
+}
+
+function renderSubtitle() {
+  const el = document.getElementById('last-update');
+  if (!contacts.length) { el.textContent = 'Aucun contact pour le moment'; return; }
+  const d = new Date(contacts[0].date);
+  el.textContent = 'Dernier reçu le ' +
+    d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}) +
+    ' à ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function del(id) {
+  if (!confirm('Supprimer ce contact ?')) return;
+  contacts = contacts.filter(c => c.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+  renderAll(); toast('Contact supprimé');
+}
+
+function clearAll() {
+  if (!confirm('Effacer tous les contacts ? Action irréversible.')) return;
+  contacts = [];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+  renderAll(); toast('Liste effacée');
+}
+
+// ════════════════════
+//  QR CODE
+// ════════════════════
+let qrDone = false;
+function openQR() {
+  const url = location.href.split('#')[0].split('?')[0];
+  document.getElementById('form-url').textContent = url;
+  document.getElementById('modal-overlay').classList.add('open');
+  if (!qrDone) {
+    document.getElementById('qrcode').innerHTML = '';
+    new QRCode(document.getElementById('qrcode'), {
+      text: url, width: 200, height: 200,
+      colorDark: '#00008F', colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    qrDone = true;
+  }
+}
+function closeQR() { document.getElementById('modal-overlay').classList.remove('open'); }
+function copyUrl() {
+  navigator.clipboard.writeText(document.getElementById('form-url').textContent)
+    .then(() => toast('🔗 Lien copié !'));
+}
+
+// ════════════════════
+//  TOAST
+// ════════════════════
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+init();
+</script>
+</body>
+</html>
